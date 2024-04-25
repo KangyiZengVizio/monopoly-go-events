@@ -1,10 +1,9 @@
 from botasaurus import *
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
-from datetime import date,datetime
+from datetime import date,datetime,timedelta
 import json
 import configparser
- 
 #load config
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -62,17 +61,19 @@ def loading_event_data():
 
 def time_to_crontab(time_str):
     # Parse the input time string
-    time_format = "%m/%d/%Y, %I:%M:%S %p"
-    parsed_time = datetime.strptime(time_str, time_format)
+    dt = datetime.strptime(time_str, "%m/%d/%Y, %I:%M:%S %p")
+    
+    # Convert to crontab format
+    dt += timedelta(hours=6)
+    
+    # Convert to crontab format
+    minute = dt.minute
+    hour = dt.hour
+    day = dt.day
+    month = dt.month
 
-    # Convert to crontab expression
-    minute = parsed_time.minute
-    hour = parsed_time.hour
+    return f"{minute} {hour} {day} {month} *"
 
-    # Create the crontab expression
-    crontab_expression = f"{minute} {hour}/3 * * *"
-
-    return crontab_expression
 
 # Example usage
 # input_time = "4/23/2024, 2:00:00 AM"
@@ -80,12 +81,20 @@ def time_to_crontab(time_str):
 # print(f"Crontab expression for {input_time}: {crontab_result}")
 def handling_event_data(events):
     print(events)
-    file_to_edit = "crontab"
-    start_line_to_remove = "#monopoly"
-    end_line_to_remove = "#monopoly_end"
-    remove_between_lines(file_to_edit, start_line_to_remove, end_line_to_remove)
+    file_to_edit = "/etc/crontab"
+    start_line = "#monopoly"
+    end_line = "#monopoly_end"
+    inject_list_string=""
+    remove_between_lines(file_to_edit, start_line, end_line)
     for event in events:
-        time_to_crontab(event["time"].split("—")[0].strip())
+        crontab_expression = time_to_crontab(event["Time"].split("—")[0].strip())
+        Title="'{}'".format(event["Title"])
+        Time="'{}'".format(event["Time"])
+        Duration="'{}'".format(event["Duration"])
+        inject_string=f"{crontab_expression} python text_message.py {Title} {Time} {Duration} \n"
+        inject_list_string+=inject_string
+    print(inject_list_string)
+    inject_string_to_crontab(file_to_edit,start_line, end_line, inject_list_string)
 
 
 def remove_between_lines(filename, start_line, end_line):
@@ -114,6 +123,35 @@ def remove_between_lines(filename, start_line, end_line):
             print(f"Lines '{start_line}' and '{end_line}' not found in {filename}")
     except FileNotFoundError:
         print(f"File {filename} not found")
+
+def inject_string_to_crontab(file_path, start_line, end_line,string_to_inject):
+    try:
+        # Read the content of the file
+        with open(file_path, 'r',encoding='utf-8') as f:
+            lines = f.readlines()
+
+        # Find the indices of the lines containing "#monopoly" and "#monopoly_end"
+        start_index = None
+        end_index = None
+        for i, line in enumerate(lines):
+            if line.strip() == start_line:
+                start_index = i
+            elif line.strip() == end_line:
+                end_index = i
+
+        # If both indices are found, inject the string between them
+        if start_index is not None and end_index is not None:
+            lines.insert(end_index, string_to_inject + '\n')
+
+            # Write the modified content back to the file
+            with open(file_path, 'w') as f:
+                f.writelines(lines)
+            print(f"String injected successfully between lines #monopoly and #monopoly_end.")
+        else:
+            print("Error: Could not find the specified lines in the file.")
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found.")
+
 
 if __name__ == "__main__":
     # Initiate the web scraping task

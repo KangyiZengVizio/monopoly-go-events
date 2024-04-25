@@ -1,9 +1,13 @@
 import smtplib
 import sys
- 
 import configparser
  
- 
+print(sys.argv)
+
+Title=sys.argv[1]
+Time=sys.argv[2]
+Duration=sys.argv[3]
+
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -11,7 +15,8 @@ CARRIERS = {
     "att": "@mms.att.net",
     "tmobile": "@tmomail.net",
     "verizon": "@vtext.com",
-    "sprint": "@messaging.sprintpcs.com"
+    "sprint": "@messaging.sprintpcs.com",
+    "gmail": "@gmail.com"
 }
  
 EMAIL = config["sender"]["email"]
@@ -39,7 +44,9 @@ if __name__ == "__main__":
     # phone_number = sys.argv[1]
     # carrier = sys.argv[2]
     # message = sys.argv[3]
-    phone_number = config['recipient 2']['phone']
-    carrier = config['recipient 2']['carrier']
-    message = "This is a test!"
-    send_message(phone_number, carrier, message)
+    phone_number = config['recipient 1']['phone']
+    carrier = config['recipient 1']['carrier']
+    message1 = f"\nEvent {Title} will begin, At {Time},duration is {Duration}".encode('utf-8')
+    print(message1)
+    #send_message(phone_number, carrier, message1)
+    send_message(phone_number, carrier, message1)
