@@ -16,7 +16,7 @@ today = date.today()
 
 # Format the date as required
 event_string = f"todays-events-{today.strftime('%b-%d-%Y').lower()}"
-
+today_time_for_patch = today.strftime('%m/%d/%Y')
 
 
 # Define the URL of the Monopoly Go events page
@@ -63,9 +63,11 @@ def loading_event_data():
 
 def time_to_crontab(time_str):
     # Parse the input time string
-    time_formats = ["%m/%d/%Y, %I:%M:%S %p","%I:%M:%S %p"]
+    time_formats = ["%m/%d/%Y, %I:%M:%S %p"]
     dt = None
-
+    if len(time_str.split(',')) == 1:
+        today = datetime.today().strftime("%m/%d/%Y")
+        time_str = f"{today}, {time_str}"
     for fmt in time_formats:
         try:
             dt = datetime.strptime(time_str, fmt)
@@ -168,7 +170,7 @@ def inject_string_to_crontab(file_path, start_line, end_line,string_to_inject):
 
 if __name__ == "__main__":
     # Initiate the web scraping task
-    scrape_heading_task()
+    #scrape_heading_task()
     # handling events data
     events = loading_event_data()
     handling_event_data(events)
