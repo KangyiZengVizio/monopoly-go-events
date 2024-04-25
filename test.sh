@@ -1,1 +1,1 @@
-5 4 * * * ~/Documents/projects/monopoly-go-events/monopoly_go.py
+5 4 * * * python ~/Documents/projects/monopoly-go-events/monopoly_go.py
