@@ -76,7 +76,7 @@ def time_to_crontab(time_str):
     if dt is None:
         return "Invalid time format"
     # Convert to crontab format
-    dt += timedelta(hours=6)
+    dt += timedelta(hours=0)
     
     # Convert to crontab format
     minute = dt.minute
