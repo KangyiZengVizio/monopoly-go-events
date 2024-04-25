@@ -155,7 +155,7 @@ def inject_string_to_crontab(file_path, start_line, end_line,string_to_inject):
 
 if __name__ == "__main__":
     # Initiate the web scraping task
-    #scrape_heading_task()
+    scrape_heading_task()
     # handling events data
     events = loading_event_data()
     handling_event_data(events)
