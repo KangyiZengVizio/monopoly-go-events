@@ -37,13 +37,7 @@ def send_message(phone_number, carrier, message):
  
  
 if __name__ == "__main__":
-    # if len(sys.argv) < 4:
-    #     print(f"Usage: python3 {sys.argv[0]} <PHONE_NUMBER> <CARRIER> <MESSAGE>")
-    #     sys.exit(0)
- 
-    # phone_number = sys.argv[1]
-    # carrier = sys.argv[2]
-    # message = sys.argv[3]
+
     phone_number = config['recipient 1']['phone']
     carrier = config['recipient 1']['carrier']
     message1 = f"\nEvent {Title} will begin, At {Time},duration is {Duration}".encode('utf-8')

@@ -4,11 +4,13 @@ from bs4 import BeautifulSoup
 from datetime import date,datetime,timedelta
 import json
 import configparser
+from pathlib import Path
 #load config
 config = configparser.ConfigParser()
 config.read('config.ini')
 base_url = config["host"]["base_url"]
 file_location = config["host"]["file_location"]
+crontab_file= config["host"]["crontab"]
 # Define today's date
 today = date.today()
 
@@ -61,8 +63,18 @@ def loading_event_data():
 
 def time_to_crontab(time_str):
     # Parse the input time string
-    dt = datetime.strptime(time_str, "%m/%d/%Y, %I:%M:%S %p")
-    
+    time_formats = ["%m/%d/%Y, %I:%M:%S %p","%I:%M:%S %p"]
+    dt = None
+
+    for fmt in time_formats:
+        try:
+            dt = datetime.strptime(time_str, fmt)
+            break
+        except ValueError:
+            pass
+
+    if dt is None:
+        return "Invalid time format"
     # Convert to crontab format
     dt += timedelta(hours=6)
     
@@ -81,7 +93,7 @@ def time_to_crontab(time_str):
 # print(f"Crontab expression for {input_time}: {crontab_result}")
 def handling_event_data(events):
     print(events)
-    file_to_edit = "/etc/crontab"
+    file_to_edit = crontab_file
     start_line = "#monopoly"
     end_line = "#monopoly_end"
     inject_list_string=""
@@ -91,7 +103,8 @@ def handling_event_data(events):
         Title="'{}'".format(event["Title"])
         Time="'{}'".format(event["Time"])
         Duration="'{}'".format(event["Duration"])
-        inject_string=f"{crontab_expression} python text_message.py {Title} {Time} {Duration} \n"
+        cwd=Path.cwd()
+        inject_string=f"{crontab_expression} python {cwd}/text_message.py {Title} {Time} {Duration} \n"
         inject_list_string+=inject_string
     print(inject_list_string)
     inject_string_to_crontab(file_to_edit,start_line, end_line, inject_list_string)
