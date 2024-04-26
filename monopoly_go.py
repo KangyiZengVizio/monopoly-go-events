@@ -106,7 +106,7 @@ def handling_event_data(events):
         Time="'{}'".format(event["Time"])
         Duration="'{}'".format(event["Duration"])
         cwd=Path.cwd()
-        inject_string=f"{crontab_expression} python3 {cwd}/text_message.py {Title} {Time} {Duration} \n"
+        inject_string=f"{crontab_expression} cd {cwd} && python3 ./text_message.py {Title} {Time} {Duration} \n"
         inject_list_string+=inject_string
     print(inject_list_string)
     inject_string_to_crontab(file_to_edit,start_line, end_line, inject_list_string)
