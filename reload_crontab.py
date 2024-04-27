@@ -7,6 +7,13 @@ def activate_cron():
     # Wait for crontab to save
     time.sleep(5)
     activate.kill()
+def verify_cron():
+    execute = subprocess.Popen(["echo", "\033:wq\n"], stdout=subprocess.PIPE)
+    activate = subprocess.Popen(["crontab", "-l"], stdin=execute.stdout)
+    # Wait for crontab to save
+    time.sleep(5)
+    activate.kill()
 
 if __name__ == "__main__":
+    verify_cron()
     activate_cron()
