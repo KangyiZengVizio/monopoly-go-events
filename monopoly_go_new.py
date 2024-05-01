@@ -107,8 +107,8 @@ def handling_event_data(events):
         Title="'{}'".format(event["Title"])
         Time="'{}'".format(event["Time"])
         Duration="'{}'".format(event["Duration"])
-        command = f'/usr/local/bin/python3 ./text_message.py {Title} {Time} {Duration}'
-        print(command)
+        #command = f'/usr/local/bin/python3 ./text_message.py {Title} {Time} {Duration}'
+        command ='/usr/local/bin/python3 ./text_message.py'
         job = my_cron.new(command=command, comment='event_job')
         job.setall(time_to_crontab)
         my_cron.write()
