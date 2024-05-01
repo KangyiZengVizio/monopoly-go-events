@@ -114,7 +114,7 @@ def handling_event_data(events):
         print(job)
 
 def remove_cron_jobs(my_cron):
-    my_cron.remove(comment='event_job')
+    my_cron.remove_all(comment='event_job')
     my_cron.write()
 
 
