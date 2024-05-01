@@ -90,9 +90,9 @@ def time_to_crontab(time_str):
     hour = dt.hour
     day = dt.day
     month = dt.month
-
-    #return f"{minute} {hour} {day} {month} *"
-    return datetime('*',month,day,hour,minute)
+    
+    cronData = f"{minute} {hour} {day} {month} *"
+    return cronData
 
 
 # Example usage
@@ -107,10 +107,11 @@ def handling_event_data(events):
         Title="'{}'".format(event["Title"])
         Time="'{}'".format(event["Time"])
         Duration="'{}'".format(event["Duration"])
-        #command = f'/usr/local/bin/python3 ./text_message.py {Title} {Time} {Duration}'
-        command ='/usr/local/bin/python3 ./text_message.py'
+        command = f'/usr/local/bin/python3 ./text_message.py {Title} {Time} {Duration}'
         job = my_cron.new(command=command, comment='event_job')
-        job.setall(time_to_crontab)
+        cron_expression = time_to_crontab(event["Time"].split("—")[0].strip())
+        print(cron_expression)
+        job.setall(cron_expression)
         my_cron.write()
     for job in my_cron:
         print(job)
