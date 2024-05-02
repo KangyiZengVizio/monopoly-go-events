@@ -107,7 +107,7 @@ def handling_event_data(events):
         Title="'{}'".format(event["Title"])
         Time="'{}'".format(event["Time"])
         Duration="'{}'".format(event["Duration"])
-        command = f'/usr/local/bin/python3 ./text_message.py {Title} {Time} {Duration}'
+        command = f' cd /Users/kyle/Documents/projects/monopoly-go-events && /usr/local/bin/python3 ./text_message.py {Title} {Time} {Duration}'
         job = my_cron.new(command=command, comment='event_job')
         cron_expression = time_to_crontab(event["Time"].split("—")[0].strip())
         print(cron_expression)
