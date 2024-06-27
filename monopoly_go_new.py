@@ -83,7 +83,7 @@ def time_to_crontab(time_str):
     if dt is None:
         return "Invalid time format"
     # Convert to crontab format
-    dt += timedelta(hours=0)
+    dt -= timedelta(minutes=20,hours=0) # 20 mins ahead of actual time for notification purpose
     
     # Convert to crontab format
     minute = dt.minute
